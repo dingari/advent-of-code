@@ -4,6 +4,7 @@ use std::fs::File;
 use std::io::prelude::*;
 
 mod day1;
+mod day2;
 
 fn read_file_to_string(file_path: &Path) -> String {
     let mut file = File::open(file_path).unwrap();
@@ -23,4 +24,5 @@ fn main() {
     println!("Current dir: {:?}", root.to_str());
 
     day1::run(&read_file_to_string(root.join("day1").join("input.txt").into_boxed_path().as_ref()));
+    day2::run(&read_file_to_string(root.join("day2").join("input.txt").into_boxed_path().as_ref()));
 }

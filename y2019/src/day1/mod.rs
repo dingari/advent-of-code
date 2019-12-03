@@ -8,6 +8,8 @@ fn calculate_fuel_rec(x: &i32) -> i32 {
 }
 
 pub fn run(input_str: &String) {
+    println!("\n-- Day 1 --");
+
     let input = parse_lines(
         &input_str.trim_end_matches('\n').to_string(),
         |s| s.parse::<i32>().unwrap(),
