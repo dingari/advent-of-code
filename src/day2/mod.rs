@@ -1,3 +1,5 @@
+use itertools::Itertools;
+
 enum Op {
     Add { x: usize, y: usize, dst: usize },
     Mul { x: usize, y: usize, dst: usize },
@@ -33,15 +35,13 @@ fn run_program(input: &Vec<usize>) -> Vec<usize> {
 fn find_input(input: &Vec<usize>, desired_output: usize) -> (usize, usize) {
     let mut v = input.clone();
 
-    for i in 1..100usize {
-        for j in 1..100usize {
+    for (i, j) in (1..100_usize).cartesian_product(1..100_usize) {
             v[1..=2].copy_from_slice(&[i, j]);
 
             let out = run_program(&v);
             if out[0] == desired_output {
                 return (i, j);
             }
-        }
     }
 
     return (0, 0);

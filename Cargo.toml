@@ -1,5 +1,5 @@
 [package]
-name = "y2019"
+name = "aoc-19"
 version = "0.1.0"
 authors = ["Daniel Gretarsson <danielgretars@gmail.com>"]
 edition = "2018"
