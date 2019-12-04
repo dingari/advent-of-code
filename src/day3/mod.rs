@@ -69,10 +69,10 @@ fn construct_path(v: &Vec<(i32, i32)>) -> Path {
 pub fn run(input_str: &String) {
     println!("\n-- Day 3 --");
 
-    let manhattan_distance = |p1: Point, p2: Point| -> i32 { (p1.0 - p2.0).abs() + (p1.0 - p2.1).abs() };
-
     //==============================================================================================
     // Part 1
+    let manhattan_distance = |p1: Point, p2: Point| -> i32 { (p1.0 - p2.0).abs() + (p1.0 - p2.1).abs() };
+
     let min_manhattan_distance = |v: &Vec<Vec<(i32, i32)>>| -> Option<i32> {
         let path_a = construct_path(&v[0]);
         let path_b = construct_path(&v[1]);
