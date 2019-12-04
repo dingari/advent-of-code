@@ -35,8 +35,7 @@ fn find_input(input: &Vec<usize>, desired_output: usize) -> (usize, usize) {
 
     for i in 1..100usize {
         for j in 1..100usize {
-            v[1] = i;
-            v[2] = j;
+            v[1..=2].copy_from_slice(&[i, j]);
 
             let out = run_program(&v);
             if out[0] == desired_output {
@@ -63,10 +62,8 @@ pub fn run(input_str: &String) {
     assert_eq!(run_program(&vec![2, 4, 4, 5, 99, 0]), vec![2, 4, 4, 5, 99, 9801]);
     assert_eq!(run_program(&vec![1, 1, 1, 4, 99, 5, 6, 0, 99]), vec![30, 1, 1, 4, 2, 5, 6, 0, 99]);
 
-    input[1] = 12;
-    input[2] = 02;
-
-    println!("Part 1: {:?}", run_program(&input));
+    input[1..=2].copy_from_slice(&[12, 02]);
+    println!("Part 1: {:?}", run_program(&input)[0]);
 
     // Part 2
     println!("Part 2: {:?}", find_input(&input, 19690720));
