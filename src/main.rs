@@ -7,6 +7,7 @@ mod day1;
 mod day2;
 mod day3;
 mod day4;
+mod day5;
 
 fn read_file_to_string(file_path: &Path) -> String {
     let mut file = File::open(file_path).unwrap();
@@ -25,8 +26,9 @@ fn main() {
     let root = env::current_dir().unwrap().join("src");
     println!("Current dir: {:?}", root.to_str());
 
-    day1::run(&read_file_to_string(root.join("day1").join("input.txt").into_boxed_path().as_ref()));
-    day2::run(&read_file_to_string(root.join("day2").join("input.txt").into_boxed_path().as_ref()));
-    day3::run(&read_file_to_string(root.join("day3").join("input.txt").into_boxed_path().as_ref()));
-    day4::run(&read_file_to_string(root.join("day4").join("input.txt").into_boxed_path().as_ref()));
+//    day1::run(&read_file_to_string(root.join("day1").join("input.txt").into_boxed_path().as_ref()));
+//    day2::run(&read_file_to_string(root.join("day2").join("input.txt").into_boxed_path().as_ref()));
+//    day3::run(&read_file_to_string(root.join("day3").join("input.txt").into_boxed_path().as_ref()));
+//    day4::run(&read_file_to_string(root.join("day4").join("input.txt").into_boxed_path().as_ref()));
+    day5::run(&read_file_to_string(root.join("day5").join("input.txt").into_boxed_path().as_ref()));
 }
