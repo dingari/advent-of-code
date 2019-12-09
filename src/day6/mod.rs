@@ -18,10 +18,10 @@ fn parse_input(input: &str) -> Vec<(String, String)> {
 fn construct_graph(orb_relationships: &Vec<(String, String)>) -> (HashMap<&str, NodeIndex<u32>>, Graph<&str, usize, Undirected>) {
     let nodes = orb_relationships
         .iter()
-        .map(|(c, o)| c.as_str())
+        .map(|(c, _)| c.as_str())
         .chain(orb_relationships
             .iter()
-            .map(|(c, o)| o.as_str())
+            .map(|(_, o)| o.as_str())
         )
         .collect::<HashSet<&str>>();
 
@@ -46,16 +46,8 @@ pub fn run(input_str: &String) {
     let test_input = parse_input("COM)B\nB)C\nC)D\nD)E\nE)F\nB)G\nG)H\nD)I\nE)J\nJ)K\nK)L");
 
     let dist = |g: &Graph<&str, usize, Undirected>, start: NodeIndex<u32>, end: NodeIndex<u32>| -> Option<usize> {
-        let path = algo::astar(
-            &g,
-            start,
-            |n| n == end,
-            |e| *e.weight(),
-            |_| 0,
-        );
-
-        match path {
-            Some((cost, path)) => Some(cost),
+        match algo::astar(&g, start, |n| n == end, |e| *e.weight(), |_| 0) {
+            Some((cost, _)) => Some(cost),
             None => None,
         }
     };

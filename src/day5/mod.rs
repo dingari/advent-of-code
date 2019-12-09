@@ -1,5 +1,3 @@
-use itertools::Itertools;
-
 #[derive(Debug, Copy, Clone)]
 enum Param {
     Address { x: usize },
@@ -74,7 +72,7 @@ fn run_program(input: &Program, input_fn: &dyn Fn() -> i32, output_fn: &dyn Fn(i
         let write_val = |v: &mut Program, dst: Param, val: i32| {
             match dst {
                 Param::Address { x } => v[x] = val,
-                Param::Immediate { x } => unreachable!(),
+                Param::Immediate { x: _ } => unreachable!(),
             };
         };
 
@@ -100,7 +98,7 @@ fn run_program(input: &Program, input_fn: &dyn Fn() -> i32, output_fn: &dyn Fn(i
 pub fn run(input_str: &String) {
     println!("\n-- Day 5 --");
 
-    let mut input: Program = input_str
+    let input: Program = input_str
         .trim_end_matches('\n')
         .split(',')
         .map(|s| s.parse::<i32>().unwrap())
