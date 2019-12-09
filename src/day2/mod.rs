@@ -1,47 +1,27 @@
 use itertools::Itertools;
 
-enum Op {
-    Add { x: usize, y: usize, dst: usize },
-    Mul { x: usize, y: usize, dst: usize },
-    Halt,
-}
+use super::intcode::*;
 
-fn run_program(input: &Vec<usize>) -> Vec<usize> {
-    let parse_op = |v: &[usize]| -> Op {
-        match v[0] {
-            1 => Op::Add { x: v[1], y: v[2], dst: v[3] },
-            2 => Op::Mul { x: v[1], y: v[2], dst: v[3] },
-            99 => Op::Halt,
-            _ => panic!("Unknown opcode: {}", v[0]),
-        }
-    };
+fn run_program(input: &Program) -> Program {
+    let mut computer = Intcode::new(input.clone(), None, None);
 
-    let mut out = input.clone();
-
-    for i in (0..out.len()).step_by(4) {
-        let end = if i + 4 >= out.len() { out.len() } else { i + 4 };
-        let op = parse_op(&out[i..end]);
-
-        match op {
-            Op::Add { x, y, dst } => out[dst] = out[x] + out[y],
-            Op::Mul { x, y, dst } => out[dst] = out[x] * out[y],
-            Op::Halt => break,
-        }
+    while !computer.is_halted() {
+        computer.cycle();
     }
 
-    return out;
+    computer.program()
 }
 
-fn find_input(input: &Vec<usize>, desired_output: usize) -> (usize, usize) {
+fn find_input(input: &Program, desired_output: i32) -> (i32, i32) {
     let mut v = input.clone();
 
-    for (i, j) in (1..100_usize).cartesian_product(1..100_usize) {
-            v[1..=2].copy_from_slice(&[i, j]);
+    for (i, j) in (1..100_i32).cartesian_product(1..100_i32) {
+        v[1..=2].copy_from_slice(&[i, j]);
 
-            let out = run_program(&v);
-            if out[0] == desired_output {
-                return (i, j);
-            }
+        let out = run_program(&v);
+        if out[0] == desired_output {
+            return (i, j);
+        }
     }
 
     return (0, 0);
@@ -50,10 +30,10 @@ fn find_input(input: &Vec<usize>, desired_output: usize) -> (usize, usize) {
 pub fn run(input_str: &String) {
     println!("\n-- Day 2 --");
 
-    let mut input: Vec<usize> = input_str
+    let mut input: Vec<i32> = input_str
         .trim_end_matches('\n')
         .split(',')
-        .map(|s| s.parse::<usize>().unwrap())
+        .map(|s| s.parse::<i32>().unwrap())
         .collect();
 
     // Part 1

@@ -3,6 +3,8 @@ use std::path::Path;
 use std::fs::File;
 use std::io::prelude::*;
 
+mod intcode;
+
 mod day1;
 mod day2;
 mod day3;
