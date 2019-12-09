@@ -98,7 +98,7 @@ fn run_program(input: &Program, input_fn: &dyn Fn() -> i32, output_fn: &dyn Fn(i
 }
 
 pub fn run(input_str: &String) {
-    println!("\n-- Day 25 --");
+    println!("\n-- Day 5 --");
 
     let mut input: Program = input_str
         .trim_end_matches('\n')
