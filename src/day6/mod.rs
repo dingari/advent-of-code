@@ -64,7 +64,11 @@ pub fn run(input_str: &String) {
     let count_orbits = |input: &Vec<(String, String)>| -> usize {
         let (idx_map, g) = construct_graph(input);
 
-        idx_map.keys().into_iter().map(|n| dist(&g, idx_map[n], idx_map["COM"]).unwrap()).sum()
+        idx_map
+            .keys()
+            .into_iter()
+            .map(|n| dist(&g, idx_map[n], idx_map["COM"]).unwrap())
+            .sum()
     };
 
     assert_eq!(count_orbits(&test_input), 42);
