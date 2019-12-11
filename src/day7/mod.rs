@@ -1,9 +1,5 @@
 use super::intcode::*;
 
-use std::collections::vec_deque::VecDeque;
-
-use itertools::Itertools;
-
 fn calc_thrust(program: &Program, phase: &Vec<i32>, thrust: i32) -> i32 {
     let mut output = 0;
 

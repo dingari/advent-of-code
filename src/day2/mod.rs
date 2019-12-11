@@ -3,7 +3,10 @@ use itertools::Itertools;
 use super::intcode::*;
 
 fn run_program(input: &Program) -> Program {
-    let mut computer = Intcode::new(input.clone(), None, None);
+    let mut input_fn = || -> Option<i32> { Some(0) };
+    let mut output_fn = |_: i32| { };
+
+    let mut computer = Intcode::new(input.clone(), &mut input_fn, &mut output_fn);
 
     while !computer.is_halted() {
         computer.cycle();
