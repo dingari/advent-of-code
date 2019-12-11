@@ -6,23 +6,24 @@ pub fn run(input_str: &String) {
         .chars()
         .collect();
 
+    //==============================================================================================
     // Part 1
-    let (_, counts) = input
+    let counts = input
         .chunks(25 * 6)
-        .enumerate()
-        .map(|(i, s)| (i, (0..=9)
+        .map(|s| (0..=9)
             .map(|d|
                 s.iter()
-                    .filter(|c| **c == std::char::from_digit(d, 10).unwrap())
+                    .filter(|&&c| c == std::char::from_digit(d, 10).unwrap())
                     .count()
             )
-            .collect::<Vec<usize>>())
+            .collect::<Vec<usize>>()
         )
-        .min_by(|t1, t2| t1.1[0].cmp(&t2.1[0]))
+        .min_by(|v1, v2| v1[0].cmp(&v2[0]))
         .unwrap();
 
     println!("Part 1: {}", counts[1] * counts[2]);
 
+    //==============================================================================================
     // Part 2
     let lines = input
         .chunks(25 * 6)
