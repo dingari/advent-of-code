@@ -1,6 +1,4 @@
 pub type Program = Vec<i32>;
-pub type Input = dyn Fn() -> i32;
-pub type Output = dyn Fn(i32) -> ();
 
 #[derive(Debug, Copy, Clone)]
 enum Param {
@@ -25,12 +23,12 @@ pub struct Intcode<'a> {
     pc: usize,
     is_halted: bool,
 
-    input_fn: Option<&'a Input>,
-    output_fn: Option<&'a Output>,
+    input_fn: &'a mut dyn FnMut() -> Option<i32>,
+    output_fn: &'a mut dyn FnMut(i32) -> (),
 }
 
 impl<'a> Intcode<'a> {
-    pub fn new(program: Vec<i32>, input_fn: Option<&'a Input>, output_fn: Option<&'a Output>) -> Self {
+    pub fn new(program: Vec<i32>, input_fn: &'a mut dyn FnMut() -> Option<i32>, output_fn: &'a mut dyn FnMut(i32) -> ()) -> Self {
         Intcode {
             program,
             pc: 0,
@@ -96,8 +94,8 @@ impl<'a> Intcode<'a> {
         match op {
             Op::Add { x, y, dst } => self.perform_op(x, y, dst, |x, y| x + y),
             Op::Mul { x, y, dst } => self.perform_op(x, y, dst, |x, y| x * y),
-            Op::Input { dst } => self.program[dst] = (self.input_fn.unwrap())(),
-            Op::Output { out } => (self.output_fn.unwrap())(self.program[out]),
+            Op::Input { dst } => self.program[dst] = (self.input_fn)().unwrap(),
+            Op::Output { out } => (self.output_fn)(self.program[out]),
             Op::CondJmp { cond, x, dst } => if (self.read(x) > 0) == cond { self.pc = self.read(dst) as usize },
             Op::CmpLess { x, y, dst } => self.perform_op(x, y, dst, |x, y| if x < y { 1 } else { 0 }),
             Op::CmpEq { x, y, dst } => self.perform_op(x, y, dst, |x, y| if x == y { 1 } else { 0 }),
