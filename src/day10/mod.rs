@@ -1,6 +1,6 @@
 use std::collections::{HashSet, HashMap};
 use std::f32::consts::PI;
-use std::cmp::Ordering;
+use std::cmp::Ordering::Equal;
 
 use num::Complex;
 use itertools::Itertools;
@@ -36,7 +36,7 @@ fn max_visibility(asteroids: &HashSet<P>) -> Option<(P, usize)> {
                 .collect::<HashSet<P>>()
             )
             .map(|&p| to_float(p - c).arg())
-            .sorted_by(|&a, &b| a.partial_cmp(&b).unwrap_or(Ordering::Equal))
+            .sorted_by(|&a, &b| a.partial_cmp(&b).unwrap_or(Equal))
             .dedup()
             .count()
         ))
@@ -46,35 +46,19 @@ fn max_visibility(asteroids: &HashSet<P>) -> Option<(P, usize)> {
 fn lazer(source: P, asteroids: &HashSet<P>, target: usize) -> Option<P> {
     let unwrap_phase = |p: f32| if p < 0.0 { p + 2.0 * PI } else { p };
 
-    let mut remaining = asteroids.clone();
-    let mut i = 0;
-
-    while remaining.len() > 1 {
-        let closest = remaining
-            .difference(&vec![source]
-                .into_iter()
-                .collect::<HashSet<P>>()
-            )
-            .map(|&p| (p, unwrap_phase(to_float((p - source) * P::new(0, 1)).arg()), (p - source).norm_sqr()))
-            .sorted_by(|&a, &b| a.1.partial_cmp(&b.1).unwrap())
-            .group_by(|&x| x.1)
+    asteroids
+        .difference(&vec![source]
             .into_iter()
-            .map(|(_, r)| r.into_iter().min_by(|a, b| (a.0 - source).norm_sqr().cmp(&(b.0 - source).norm_sqr())))
-            .filter(|o| o.is_some())
-            .map(|o| o.unwrap().0)
-            .collect::< Vec::<P> > ();
-
-        for a in closest {
-            remaining.remove(&a);
-            i += 1;
-
-            if i == target {
-                return Some(a);
-            }
-        }
-    }
-
-    None
+            .collect::<HashSet<P>>()
+        )
+        .map(|&p| (p, unwrap_phase(to_float((p - source) * P::new(0, 1)).arg()), (p - source).norm_sqr()))
+        .sorted_by(|&(_, a, _), &(_, b, _)| a.partial_cmp(&b).unwrap_or(Equal))
+        .group_by(|&(_, ph, _)| ph)
+        .into_iter()
+        .map(|(_, r)| r.into_iter().sorted_by(|&(_, _, a), &(_, _, b)| a.cmp(&b)).enumerate())
+        .kmerge_by(|&(i, a), &(j, b)| if i == j { a.1 < b.1 } else { i < j })
+        .map(|(_, (p, _, _))| p)
+        .nth(target - 1)
 }
 
 pub fn run(input_str: &String) {
@@ -101,7 +85,7 @@ pub fn run(input_str: &String) {
     assert_eq!(P::new(12, 1), lazer(P::new(11, 13), &parse(test[4]), 2).unwrap());
     assert_eq!(P::new(16, 0), lazer(P::new(11, 13), &parse(test[4]), 20).unwrap());
     assert_eq!(P::new(8, 2), lazer(P::new(11, 13), &parse(test[4]), 200).unwrap());
-    
+
     let a = lazer(a, &parse(&input_str), 200).unwrap();
     println!("Part 2: ({}, {})", a.re, a.im);
 }

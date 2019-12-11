@@ -32,13 +32,13 @@ fn main() {
     let root = env::current_dir().unwrap().join("src");
     println!("Current dir: {:?}", root.to_str());
 
-    day1::run(&read_file_to_string(root.join("day1").join("input.txt").into_boxed_path().as_ref()));
-    day2::run(&read_file_to_string(root.join("day2").join("input.txt").into_boxed_path().as_ref()));
-    day3::run(&read_file_to_string(root.join("day3").join("input.txt").into_boxed_path().as_ref()));
-    day4::run(&read_file_to_string(root.join("day4").join("input.txt").into_boxed_path().as_ref()));
-    day5::run(&read_file_to_string(root.join("day5").join("input.txt").into_boxed_path().as_ref()));
-    day6::run(&read_file_to_string(root.join("day6").join("input.txt").into_boxed_path().as_ref()));
-    day7::run(&read_file_to_string(root.join("day7").join("input.txt").into_boxed_path().as_ref()));
-    day8::run(&read_file_to_string(root.join("day8").join("input.txt").into_boxed_path().as_ref()));
+//    day1::run(&read_file_to_string(root.join("day1").join("input.txt").into_boxed_path().as_ref()));
+//    day2::run(&read_file_to_string(root.join("day2").join("input.txt").into_boxed_path().as_ref()));
+//    day3::run(&read_file_to_string(root.join("day3").join("input.txt").into_boxed_path().as_ref()));
+//    day4::run(&read_file_to_string(root.join("day4").join("input.txt").into_boxed_path().as_ref()));
+//    day5::run(&read_file_to_string(root.join("day5").join("input.txt").into_boxed_path().as_ref()));
+//    day6::run(&read_file_to_string(root.join("day6").join("input.txt").into_boxed_path().as_ref()));
+//    day7::run(&read_file_to_string(root.join("day7").join("input.txt").into_boxed_path().as_ref()));
+//    day8::run(&read_file_to_string(root.join("day8").join("input.txt").into_boxed_path().as_ref()));
     day10::run(&read_file_to_string(root.join("day10").join("input.txt").into_boxed_path().as_ref()));
 }
