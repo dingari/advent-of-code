@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 pub type Program = Vec<i32>;
 
 #[derive(Debug, Copy, Clone)]
@@ -18,31 +20,37 @@ enum Op {
     Halt,
 }
 
-pub struct Intcode<'a> {
+pub struct Intcode {
     program: Program,
     pc: usize,
     is_halted: bool,
 
-    input_fn: &'a mut dyn FnMut() -> Option<i32>,
-    output_fn: &'a mut dyn FnMut(i32) -> (),
+    pub input: VecDeque<i32>,
+
+    output: Option<i32>,
 }
 
-impl<'a> Intcode<'a> {
-    pub fn new(program: Vec<i32>, input_fn: &'a mut dyn FnMut() -> Option<i32>, output_fn: &'a mut dyn FnMut(i32) -> ()) -> Self {
+impl Intcode {
+    pub fn new(program: Vec<i32>, init_input: Option<&Vec<i32>>) -> Self {
         Intcode {
             program,
             pc: 0,
             is_halted: false,
-            input_fn,
-            output_fn,
+            input: match init_input {
+                Some(v) => v.iter().cloned().collect(),
+                None => vec![].into_iter().collect(),
+            },
+            output: None,
         }
     }
 
     pub fn cycle(&mut self) {
-        let (op, num_increments) = self.fetch();
-        self.pc += num_increments;
+        if !self.is_halted {
+            let (op, num_increments) = self.fetch();
+            self.pc += num_increments;
 
-        self.execute(op);
+            self.execute(op);
+        }
     }
 
     pub fn is_halted(&self) -> bool {
@@ -94,13 +102,38 @@ impl<'a> Intcode<'a> {
         match op {
             Op::Add { x, y, dst } => self.perform_op(x, y, dst, |x, y| x + y),
             Op::Mul { x, y, dst } => self.perform_op(x, y, dst, |x, y| x * y),
-            Op::Input { dst } => self.program[dst] = (self.input_fn)().unwrap(),
-            Op::Output { out } => (self.output_fn)(self.program[out]),
+            Op::Input { dst } => match self.input.pop_front() {
+                Some(x) => self.program[dst] = x,
+                None => panic!("No input provided"),
+            },
+            Op::Output { out } => self.output = Some(self.program[out]),
             Op::CondJmp { cond, x, dst } => if (self.read(x) > 0) == cond { self.pc = self.read(dst) as usize },
             Op::CmpLess { x, y, dst } => self.perform_op(x, y, dst, |x, y| if x < y { 1 } else { 0 }),
             Op::CmpEq { x, y, dst } => self.perform_op(x, y, dst, |x, y| if x == y { 1 } else { 0 }),
             Op::Halt => self.is_halted = true,
         };
+    }
+
+    pub fn run_til_halt(&mut self) -> Option<i32> {
+        while !self.is_halted {
+            self.cycle();
+        }
+
+        self.output
+    }
+
+    pub fn run_til_output(&mut self) -> Option<i32> {
+        self.output = None;
+
+        while self.output == None && !self.is_halted {
+            self.cycle();
+        }
+
+        self.output
+    }
+
+    pub fn output(&self) -> Option<i32> {
+        self.output
     }
 
     fn perform_op(&mut self, x: Param, y: Param, dst: Param, op: fn(i32, i32) -> i32) {
