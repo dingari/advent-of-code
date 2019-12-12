@@ -13,6 +13,7 @@ mod day05;
 mod day06;
 mod day07;
 mod day08;
+mod day09;
 mod day10;
 
 fn read_file_to_string(file_path: &Path) -> String {
@@ -40,5 +41,6 @@ fn main() {
     day06::run(&read_file_to_string(root.join("day06").join("input.txt").into_boxed_path().as_ref()));
     day07::run(&read_file_to_string(root.join("day07").join("input.txt").into_boxed_path().as_ref()));
     day08::run(&read_file_to_string(root.join("day08").join("input.txt").into_boxed_path().as_ref()));
+    day09::run(&read_file_to_string(root.join("day09").join("input.txt").into_boxed_path().as_ref()));
     day10::run(&read_file_to_string(root.join("day10").join("input.txt").into_boxed_path().as_ref()));
 }

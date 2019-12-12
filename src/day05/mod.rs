@@ -7,7 +7,7 @@ fn run_program(p: &Program, input: &Vec<i32>) -> (Program, Option<i32>) {
         computer.cycle();
     }
 
-    (computer.program(), computer.output())
+    (computer.program(), computer.output.pop_front())
 }
 
 pub fn run(input_str: &String) {
