@@ -1,12 +1,12 @@
 use std::collections::VecDeque;
 
-pub type Program = Vec<i32>;
+pub type Program = Vec<i64>;
 
 #[derive(Debug, Copy, Clone)]
 enum Param {
     Address { x: usize },
-    Immediate { x: i32 },
-    Relative { x: i32 },
+    Immediate { x: i64 },
+    Relative { x: i64 },
 }
 
 #[derive(Debug)]
@@ -27,17 +27,17 @@ pub struct Intcode {
     pc: usize,
     is_halted: bool,
 
-    pub input: VecDeque<i32>,
-    pub output: VecDeque<i32>,
+    pub input: VecDeque<i64>,
+    pub output: VecDeque<i64>,
 
     relative_base: usize,
-    memory: Vec<i32>,
+    memory: Vec<i64>,
     program_size: usize,
 }
 
 impl Intcode {
-    pub fn new(program: Vec<i32>, init_input: Option<&Vec<i32>>) -> Self {
-        let mut v = vec![0; 1024];
+    pub fn new(program: Vec<i64>, init_input: Option<&Vec<i64>>) -> Self {
+        let mut v = vec![0; 2048];
         v[0..program.len()].copy_from_slice(&program);
 
         Intcode {
@@ -48,7 +48,7 @@ impl Intcode {
                 Some(v) => v.iter().cloned().collect(),
                 None => vec![].into_iter().collect(),
             },
-            output: VecDeque::<i32>::new(),
+            output: VecDeque::<i64>::new(),
             relative_base: 0,
             memory: vec![0; 1024],
             program_size: program.len(),
@@ -84,10 +84,10 @@ impl Intcode {
             (x % 100, get_digit(x, 2), get_digit(x, 3), get_digit(x, 4))
         };
 
-        let param = |x: i32, mode: usize| -> Param {
+        let param = |x: i64, mode: usize| -> Param {
             match mode {
                 0 => Param::Address { x: x as usize },
-                1 => Param::Immediate { x: x as i32 },
+                1 => Param::Immediate { x: x as i64 },
                 2 => Param::Relative { x },
                 _ => unreachable!("{}, {}", x, mode),
             }
@@ -123,12 +123,12 @@ impl Intcode {
             Op::CondJmp { cond, x, dst } => if (self.read(x) > 0) == cond { self.pc = self.read(dst) as usize },
             Op::CmpLess { x, y, dst } => self.perform_op(x, y, dst, |x, y| if x < y { 1 } else { 0 }),
             Op::CmpEq { x, y, dst } => self.perform_op(x, y, dst, |x, y| if x == y { 1 } else { 0 }),
-            Op::AdjRelBase { x } => self.relative_base = self.read(x) as usize,
+            Op::AdjRelBase { x } => self.relative_base = (self.relative_base as i64 + self.read(x)) as usize,
             Op::Halt => self.is_halted = true,
         };
     }
 
-    pub fn run_til_halt(&mut self) -> Option<i32> {
+    pub fn run_til_halt(&mut self) -> Option<i64> {
         while !self.is_halted {
             self.cycle();
         }
@@ -136,7 +136,7 @@ impl Intcode {
         self.output.pop_front()
     }
 
-    pub fn run_til_output(&mut self) -> Option<i32> {
+    pub fn run_til_output(&mut self) -> Option<i64> {
         let num_out = self.output.len();
 
         while self.output.len() == num_out && !self.is_halted {
@@ -146,23 +146,23 @@ impl Intcode {
         self.output.pop_front()
     }
 
-    fn perform_op(&mut self, x: Param, y: Param, dst: Param, op: fn(i32, i32) -> i32) {
+    fn perform_op(&mut self, x: Param, y: Param, dst: Param, op: fn(i64, i64) -> i64) {
         self.write(dst, op(self.read(x), self.read(y)));
     }
 
-    fn read(&self, x: Param) -> i32 {
+    fn read(&self, x: Param) -> i64 {
         match x {
             Param::Address { x } => self.program[x],
             Param::Immediate { x } => x,
-            Param::Relative { x } => self.program[(self.relative_base as i32 + x) as usize],
+            Param::Relative { x } => self.program[(self.relative_base as i64 + x) as usize],
         }
     }
 
-    fn write(&mut self, dst: Param, val: i32) {
+    fn write(&mut self, dst: Param, val: i64) {
         match dst {
             Param::Address { x } => self.program[x] = val,
             Param::Immediate { x: _ } => unreachable!(),
-            Param::Relative { x } => self.program[(self.relative_base as i32 + x) as usize] = val,
+            Param::Relative { x } => self.program[(self.relative_base as i64 + x) as usize] = val,
         };
     }
 }

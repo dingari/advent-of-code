@@ -1,6 +1,6 @@
 use super::intcode::*;
 
-fn calc_thrust(program: &Program, phase: &Vec<i32>) -> i32 {
+fn calc_thrust(program: &Program, phase: &Vec<i64>) -> i64 {
     phase.iter().fold(0, |acc, &p| {
         let mut c = Intcode::new(program.clone(), Some(&vec![p, acc]));
 
@@ -8,7 +8,7 @@ fn calc_thrust(program: &Program, phase: &Vec<i32>) -> i32 {
     })
 }
 
-fn feedback(program: &Program, phase: &Vec<i32>) -> i32 {
+fn feedback(program: &Program, phase: &Vec<i64>) -> i64 {
     let mut amps = phase
         .iter()
         .map(|&p| Intcode::new(program.clone(), Some(&vec![p])))
@@ -34,7 +34,7 @@ pub fn run(input_str: &String) {
     let input: Program = input_str
         .trim_end_matches('\n')
         .split(',')
-        .map(|s| s.parse::<i32>().unwrap())
+        .map(|s| s.parse::<i64>().unwrap())
         .collect();
 
     //==============================================================================================

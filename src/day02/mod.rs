@@ -12,10 +12,10 @@ fn run_program(input: &Program) -> Program {
     computer.program()
 }
 
-fn find_input(input: &Program, desired_output: i32) -> (i32, i32) {
+fn find_input(input: &Program, desired_output: i64) -> (i64, i64) {
     let mut v = input.clone();
 
-    for (i, j) in (1..100_i32).cartesian_product(1..100_i32) {
+    for (i, j) in (1..100_i64).cartesian_product(1..100_i64) {
         v[1..=2].copy_from_slice(&[i, j]);
 
         let out = run_program(&v);
@@ -30,10 +30,10 @@ fn find_input(input: &Program, desired_output: i32) -> (i32, i32) {
 pub fn run(input_str: &String) {
     println!("\n-- Day 2 --");
 
-    let mut input: Vec<i32> = input_str
+    let mut input: Vec<i64> = input_str
         .trim_end_matches('\n')
         .split(',')
-        .map(|s| s.parse::<i32>().unwrap())
+        .map(|s| s.parse::<i64>().unwrap())
         .collect();
 
     // Part 1

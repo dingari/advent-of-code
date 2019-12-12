@@ -1,6 +1,6 @@
 use super::intcode::*;
 
-fn run_program(p: &Program, input: &Vec<i32>) -> (Program, Option<i32>) {
+fn run_program(p: &Program, input: &Vec<i64>) -> (Program, Option<i64>) {
     let mut computer = Intcode::new(p.clone(), Some(input));
 
     while !computer.is_halted() {
@@ -16,7 +16,7 @@ pub fn run(input_str: &String) {
     let input: Program = input_str
         .trim_end_matches('\n')
         .split(',')
-        .map(|s| s.parse::<i32>().unwrap())
+        .map(|s| s.parse::<i64>().unwrap())
         .collect();
 
     //==============================================================================================
