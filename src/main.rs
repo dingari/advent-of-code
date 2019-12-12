@@ -5,14 +5,14 @@ use std::io::prelude::*;
 
 mod intcode;
 
-mod day1;
-mod day2;
-mod day3;
-mod day4;
-mod day5;
-mod day6;
-mod day7;
-mod day8;
+mod day01;
+mod day02;
+mod day03;
+mod day04;
+mod day05;
+mod day06;
+mod day07;
+mod day08;
 mod day10;
 
 fn read_file_to_string(file_path: &Path) -> String {
@@ -32,13 +32,13 @@ fn main() {
     let root = env::current_dir().unwrap().join("src");
     println!("Current dir: {:?}", root.to_str());
 
-//    day1::run(&read_file_to_string(root.join("day1").join("input.txt").into_boxed_path().as_ref()));
-//    day2::run(&read_file_to_string(root.join("day2").join("input.txt").into_boxed_path().as_ref()));
-//    day3::run(&read_file_to_string(root.join("day3").join("input.txt").into_boxed_path().as_ref()));
-//    day4::run(&read_file_to_string(root.join("day4").join("input.txt").into_boxed_path().as_ref()));
-//    day5::run(&read_file_to_string(root.join("day5").join("input.txt").into_boxed_path().as_ref()));
-//    day6::run(&read_file_to_string(root.join("day6").join("input.txt").into_boxed_path().as_ref()));
-//    day7::run(&read_file_to_string(root.join("day7").join("input.txt").into_boxed_path().as_ref()));
-//    day8::run(&read_file_to_string(root.join("day8").join("input.txt").into_boxed_path().as_ref()));
+    day01::run(&read_file_to_string(root.join("day01").join("input.txt").into_boxed_path().as_ref()));
+    day02::run(&read_file_to_string(root.join("day02").join("input.txt").into_boxed_path().as_ref()));
+    day03::run(&read_file_to_string(root.join("day03").join("input.txt").into_boxed_path().as_ref()));
+    day04::run(&read_file_to_string(root.join("day04").join("input.txt").into_boxed_path().as_ref()));
+    day05::run(&read_file_to_string(root.join("day05").join("input.txt").into_boxed_path().as_ref()));
+    day06::run(&read_file_to_string(root.join("day06").join("input.txt").into_boxed_path().as_ref()));
+    day07::run(&read_file_to_string(root.join("day07").join("input.txt").into_boxed_path().as_ref()));
+    day08::run(&read_file_to_string(root.join("day08").join("input.txt").into_boxed_path().as_ref()));
     day10::run(&read_file_to_string(root.join("day10").join("input.txt").into_boxed_path().as_ref()));
 }

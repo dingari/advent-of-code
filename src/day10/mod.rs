@@ -1,4 +1,4 @@
-use std::collections::{HashSet, HashMap};
+use std::collections::HashSet;
 use std::f32::consts::PI;
 use std::cmp::Ordering::Equal;
 
@@ -62,6 +62,8 @@ fn lazer(source: P, asteroids: &HashSet<P>, target: usize) -> Option<P> {
 }
 
 pub fn run(input_str: &String) {
+    println!("\n-- Day 10 --");
+
     let test = vec![
         ".#..#\n.....\n#####\n....#\n...##",
         "......#.#.\n#..#.#....\n..#######.\n.#.#.###..\n.#..#.....\n..#....#.#\n#..#....#.\n.##.#..###\n##...#..#.\n.#....####",
