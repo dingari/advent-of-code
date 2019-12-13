@@ -112,8 +112,6 @@ impl Intcode {
     }
 
     fn execute(&mut self, op: Op) {
-//        println!("{:?}", op);
-//
         match op {
             Op::Add { x, y, dst } => self.perform_op(x, y, dst, |x, y| x + y),
             Op::Mul { x, y, dst } => self.perform_op(x, y, dst, |x, y| x * y),
