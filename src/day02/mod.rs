@@ -3,7 +3,7 @@ use itertools::Itertools;
 use super::intcode::*;
 
 fn run_program(input: &Program) -> Program {
-    let mut computer = Intcode::new(input.clone(), None);
+    let mut computer = Intcode::new(&input, None);
 
     while !computer.is_halted() {
         computer.cycle();
@@ -30,11 +30,7 @@ fn find_input(input: &Program, desired_output: i64) -> (i64, i64) {
 pub fn run(input_str: &str) {
     println!("\n-- Day 2 --");
 
-    let mut input: Vec<i64> = input_str
-        .trim_end_matches('\n')
-        .split(',')
-        .map(|s| s.parse::<i64>().unwrap())
-        .collect();
+    let mut input = super::parse_intcode_program(input_str);
 
     // Part 1
     assert_eq!(run_program(&vec![1, 0, 0, 0, 99]), vec![2, 0, 0, 0, 99]);

@@ -15,6 +15,7 @@ mod day07;
 mod day08;
 mod day09;
 mod day10;
+mod day11;
 
 fn read_file_to_string(file_path: &Path) -> String {
     let mut file = File::open(file_path).unwrap();
@@ -27,6 +28,14 @@ fn read_file_to_string(file_path: &Path) -> String {
 
 fn parse_lines<T, F>(input: &str, parser: F) -> Vec<T> where F: Fn(&str) -> T {
     input.split("\n").map(|s| parser(s)).collect()
+}
+
+fn parse_intcode_program(input_str: &str) -> intcode::Program {
+    input_str
+        .trim_end_matches('\n')
+        .split(',')
+        .map(|s| s.parse::<i64>().unwrap())
+        .collect()
 }
 
 fn main() {
@@ -43,4 +52,5 @@ fn main() {
     day08::run(&read_file_to_string(root.join("day08").join("input.txt").into_boxed_path().as_ref()));
     day09::run(&read_file_to_string(root.join("day09").join("input.txt").into_boxed_path().as_ref()));
     day10::run(&read_file_to_string(root.join("day10").join("input.txt").into_boxed_path().as_ref()));
+    day11::run(&read_file_to_string(root.join("day11").join("input.txt").into_boxed_path().as_ref()));
 }

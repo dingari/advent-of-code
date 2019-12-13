@@ -2,8 +2,8 @@ use std::collections::VecDeque;
 
 use super::intcode::*;
 
-fn run_program(p: &Program, input: Option<&Vec<i64>>) -> VecDeque<i64> {
-    let mut computer = Intcode::new(p.clone(), input);
+fn run_program(p: &Program, input: Option<&[i64]>) -> VecDeque<i64> {
+    let mut computer = Intcode::new(p, input);
 
     while !computer.is_halted() {
         computer.cycle();
@@ -15,11 +15,7 @@ fn run_program(p: &Program, input: Option<&Vec<i64>>) -> VecDeque<i64> {
 pub fn run(input_str: &str) {
     println!("\n-- Day 9 --");
 
-    let input: Program = input_str
-        .trim_end_matches('\n')
-        .split(',')
-        .map(|s| s.parse::<i64>().unwrap())
-        .collect();
+    let input = super::parse_intcode_program(input_str);
 
     //==============================================================================================
     // Part 1

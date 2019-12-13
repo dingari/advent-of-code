@@ -36,9 +36,9 @@ pub struct Intcode {
 }
 
 impl Intcode {
-    pub fn new(program: Vec<i64>, init_input: Option<&Vec<i64>>) -> Self {
+    pub fn new(program: &Vec<i64>, init_input: Option<&[i64]>) -> Self {
         let mut v = vec![0; 2048];
-        v[0..program.len()].copy_from_slice(&program);
+        v[0..program.len()].copy_from_slice(program);
 
         Intcode {
             program: v,
@@ -112,6 +112,8 @@ impl Intcode {
     }
 
     fn execute(&mut self, op: Op) {
+//        println!("{:?}", op);
+//
         match op {
             Op::Add { x, y, dst } => self.perform_op(x, y, dst, |x, y| x + y),
             Op::Mul { x, y, dst } => self.perform_op(x, y, dst, |x, y| x * y),
@@ -137,13 +139,24 @@ impl Intcode {
     }
 
     pub fn run_til_output(&mut self) -> Option<i64> {
-        let num_out = self.output.len();
+        match self.run_til_num_output(1) {
+            Some(mut o) => o.pop_front(),
+            None => None,
+        }
+    }
 
-        while self.output.len() == num_out && !self.is_halted {
+    pub fn run_til_num_output(&mut self, num: usize) -> Option<VecDeque<i64>> {
+        let start = self.output.len();
+
+        while self.output.len() < start + num && !self.is_halted {
             self.cycle();
         }
 
-        self.output.pop_front()
+        match (self.is_halted, self.output.len() == start + num) {
+            (_, true) => Some(self.output.drain(0..num).collect::<VecDeque<_>>()),
+            (true, false) => None,
+            _ => unreachable!(),
+        }
     }
 
     fn perform_op(&mut self, x: Param, y: Param, dst: Param, op: fn(i64, i64) -> i64) {

@@ -2,7 +2,7 @@ use super::intcode::*;
 
 fn calc_thrust(program: &Program, phase: &Vec<i64>) -> i64 {
     phase.iter().fold(0, |acc, &p| {
-        let mut c = Intcode::new(program.clone(), Some(&vec![p, acc]));
+        let mut c = Intcode::new(program, Some(&vec![p, acc]));
 
         c.run_til_halt().unwrap()
     })
@@ -11,7 +11,7 @@ fn calc_thrust(program: &Program, phase: &Vec<i64>) -> i64 {
 fn feedback(program: &Program, phase: &Vec<i64>) -> i64 {
     let mut amps = phase
         .iter()
-        .map(|&p| Intcode::new(program.clone(), Some(&vec![p])))
+        .map(|&p| Intcode::new(program, Some(&vec![p])))
         .collect::<Vec<_>>();
 
     let mut out = 0;
@@ -31,11 +31,7 @@ fn feedback(program: &Program, phase: &Vec<i64>) -> i64 {
 pub fn run(input_str: &str) {
     println!("\n-- Day 7 --");
 
-    let input: Program = input_str
-        .trim_end_matches('\n')
-        .split(',')
-        .map(|s| s.parse::<i64>().unwrap())
-        .collect();
+    let input = super::parse_intcode_program(input_str);
 
     //==============================================================================================
     // Part 1
