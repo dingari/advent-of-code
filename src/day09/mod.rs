@@ -29,4 +29,8 @@ pub fn run(input_str: &String) {
     assert_eq!(run_program(&vec![104, 1125899906842624, 99], None).pop_front().unwrap(), 1125899906842624);
 
     println!("Part 1: {:?}", run_program(&input, Some(&vec![1])).pop_front().unwrap());
+
+    //==============================================================================================
+    // Part 2
+    println!("Part 2: {:?}", run_program(&input, Some(&vec![2])).pop_front().unwrap());
 }
