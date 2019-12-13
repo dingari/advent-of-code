@@ -5,7 +5,7 @@ use regex::Regex;
 type Path = HashSet<(i32, i32)>;
 type Point = (i32, i32);
 
-fn parse_input(input: &String) -> Vec<Vec<(i32, i32)>> {
+fn parse_input(input: &str) -> Vec<Vec<(i32, i32)>> {
     let re = Regex::new(r"(\w)(\d+)").unwrap();
 
     let parse_fn = |s: &str| -> (i32, i32) {
@@ -66,7 +66,7 @@ fn construct_path(v: &Vec<(i32, i32)>) -> Path {
     ret
 }
 
-pub fn run(input_str: &String) {
+pub fn run(input_str: &str) {
     println!("\n-- Day 3 --");
 
     //==============================================================================================

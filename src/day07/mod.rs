@@ -28,7 +28,7 @@ fn feedback(program: &Program, phase: &Vec<i64>) -> i64 {
     out
 }
 
-pub fn run(input_str: &String) {
+pub fn run(input_str: &str) {
     println!("\n-- Day 7 --");
 
     let input: Program = input_str

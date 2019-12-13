@@ -39,7 +39,7 @@ fn construct_graph(orb_relationships: &Vec<(String, String)>) -> (HashMap<&str, 
     (indexes, g)
 }
 
-pub fn run(input_str: &String) {
+pub fn run(input_str: &str) {
     println!("\n-- Day 6 --");
 
     let input = parse_input(input_str);

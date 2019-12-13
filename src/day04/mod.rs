@@ -1,6 +1,6 @@
 use itertools::Itertools;
 
-pub fn run(input_str: &String) {
+pub fn run(input_str: &str) {
     println!("\n-- Day 4 --");
 
     let v = input_str.trim_end_matches('\n').split('-').collect::<Vec<&str>>();

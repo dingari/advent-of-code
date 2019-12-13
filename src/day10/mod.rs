@@ -61,7 +61,7 @@ fn lazer(source: P, asteroids: &HashSet<P>, target: usize) -> Option<P> {
         .nth(target - 1)
 }
 
-pub fn run(input_str: &String) {
+pub fn run(input_str: &str) {
     println!("\n-- Day 10 --");
 
     let test = vec![

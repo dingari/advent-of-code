@@ -7,7 +7,7 @@ fn calculate_fuel_rec(x: &i32) -> i32 {
     if f <= 0 { 0 } else { f + calculate_fuel_rec(&f) }
 }
 
-pub fn run(input_str: &String) {
+pub fn run(input_str: &str) {
     println!("\n-- Day 1 --");
 
     let input = parse_lines(

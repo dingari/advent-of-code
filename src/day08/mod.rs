@@ -1,4 +1,4 @@
-pub fn run(input_str: &String) {
+pub fn run(input_str: &str) {
     println!("\n-- Day 8 --");
 
     let input: Vec<char> = input_str

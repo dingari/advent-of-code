@@ -12,7 +12,7 @@ fn run_program(p: &Program, input: Option<&Vec<i64>>) -> VecDeque<i64> {
     computer.output
 }
 
-pub fn run(input_str: &String) {
+pub fn run(input_str: &str) {
     println!("\n-- Day 9 --");
 
     let input: Program = input_str

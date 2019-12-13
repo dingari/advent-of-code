@@ -10,7 +10,7 @@ fn run_program(p: &Program, input: &Vec<i64>) -> (Program, Option<i64>) {
     (computer.program(), computer.output.pop_front())
 }
 
-pub fn run(input_str: &String) {
+pub fn run(input_str: &str) {
     println!("\n-- Day 5 --");
 
     let input: Program = input_str

@@ -27,7 +27,7 @@ fn find_input(input: &Program, desired_output: i64) -> (i64, i64) {
     return (0, 0);
 }
 
-pub fn run(input_str: &String) {
+pub fn run(input_str: &str) {
     println!("\n-- Day 2 --");
 
     let mut input: Vec<i64> = input_str
