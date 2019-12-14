@@ -5,10 +5,7 @@ use super::intcode::*;
 fn run_program(input: &Program) -> Program {
     let mut computer = Intcode::new(&input, None);
 
-    while !computer.is_halted() {
-        computer.cycle();
-    }
-
+    computer.run_til_halt();
     computer.program()
 }
 

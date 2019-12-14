@@ -24,52 +24,69 @@ enum Op {
 
 pub struct Intcode {
     program: Program,
+    memory: Vec<i64>,
+
     pc: usize,
     is_halted: bool,
+    relative_base: usize,
 
     pub input: VecDeque<i64>,
     pub output: VecDeque<i64>,
-
-    relative_base: usize,
-    memory: Vec<i64>,
-    program_size: usize,
 }
 
 impl Intcode {
     pub fn new(program: &Vec<i64>, init_input: Option<&[i64]>) -> Self {
-        let mut v = vec![0; 2048];
-        v[0..program.len()].copy_from_slice(program);
-
         Intcode {
-            program: v,
+            program: program.clone(),
+            memory: vec![0; 2046],
             pc: 0,
             is_halted: false,
+            relative_base: 0,
             input: match init_input {
                 Some(v) => v.iter().cloned().collect(),
                 None => vec![].into_iter().collect(),
             },
             output: VecDeque::<i64>::new(),
-            relative_base: 0,
-            memory: vec![0; 1024],
-            program_size: program.len(),
         }
     }
 
-    pub fn cycle(&mut self) {
+    pub fn program(&self) -> Program { self.program.clone() }
+
+    pub fn run_til_halt(&mut self) {
+        while !self.is_halted {
+            self.cycle();
+        }
+    }
+
+    pub fn run_til_output(&mut self) -> Option<i64> {
+        match self.run_til_num_output(1) {
+            Some(mut o) => o.pop_front(),
+            None => None,
+        }
+    }
+
+    pub fn run_til_num_output(&mut self, num: usize) -> Option<VecDeque<i64>> {
+        let start = self.output.len();
+
+        while self.output.len() < start + num && !self.is_halted {
+            self.cycle();
+        }
+
+        match (self.is_halted, self.output.len() == start + num) {
+            (_, true) => Some(self.output.drain(0..num).collect::<VecDeque<_>>()),
+            (true, false) => None,
+            _ => unreachable!(),
+        }
+    }
+
+    //==============================================================================================
+    fn cycle(&mut self) {
         if !self.is_halted {
             let (op, num_increments) = self.fetch();
             self.pc += num_increments;
 
             self.execute(op);
         }
-    }
-
-    pub fn is_halted(&self) -> bool {
-        self.is_halted
-    }
-
-    pub fn program(&self) -> Program {
-        self.program[0..self.program_size].to_vec()
     }
 
     fn fetch(&self) -> (Op, usize) {
@@ -113,67 +130,54 @@ impl Intcode {
 
     fn execute(&mut self, op: Op) {
         match op {
-            Op::Add { x, y, dst } => self.perform_op(x, y, dst, |x, y| x + y),
-            Op::Mul { x, y, dst } => self.perform_op(x, y, dst, |x, y| x * y),
+            Op::Add { x, y, dst } => self.binary_op(x, y, dst, |x, y| x + y),
+            Op::Mul { x, y, dst } => self.binary_op(x, y, dst, |x, y| x * y),
             Op::Input { dst } => match self.input.pop_front() {
                 Some(x) => self.write(dst, x),
                 None => panic!("No input provided"),
             },
             Op::Output { out } => self.output.push_back(self.read(out)),
             Op::CondJmp { cond, x, dst } => if (self.read(x) > 0) == cond { self.pc = self.read(dst) as usize },
-            Op::CmpLess { x, y, dst } => self.perform_op(x, y, dst, |x, y| if x < y { 1 } else { 0 }),
-            Op::CmpEq { x, y, dst } => self.perform_op(x, y, dst, |x, y| if x == y { 1 } else { 0 }),
+            Op::CmpLess { x, y, dst } => self.binary_op(x, y, dst, |x, y| if x < y { 1 } else { 0 }),
+            Op::CmpEq { x, y, dst } => self.binary_op(x, y, dst, |x, y| if x == y { 1 } else { 0 }),
             Op::AdjRelBase { x } => self.relative_base = (self.relative_base as i64 + self.read(x)) as usize,
             Op::Halt => self.is_halted = true,
         };
     }
 
-    pub fn run_til_halt(&mut self) -> Option<i64> {
-        while !self.is_halted {
-            self.cycle();
-        }
-
-        self.output.pop_front()
-    }
-
-    pub fn run_til_output(&mut self) -> Option<i64> {
-        match self.run_til_num_output(1) {
-            Some(mut o) => o.pop_front(),
-            None => None,
-        }
-    }
-
-    pub fn run_til_num_output(&mut self, num: usize) -> Option<VecDeque<i64>> {
-        let start = self.output.len();
-
-        while self.output.len() < start + num && !self.is_halted {
-            self.cycle();
-        }
-
-        match (self.is_halted, self.output.len() == start + num) {
-            (_, true) => Some(self.output.drain(0..num).collect::<VecDeque<_>>()),
-            (true, false) => None,
-            _ => unreachable!(),
-        }
-    }
-
-    fn perform_op(&mut self, x: Param, y: Param, dst: Param, op: fn(i64, i64) -> i64) {
+    fn binary_op(&mut self, x: Param, y: Param, dst: Param, op: fn(i64, i64) -> i64) {
         self.write(dst, op(self.read(x), self.read(y)));
+    }
+
+    fn read_mem(&self, address: usize) -> i64 {
+        if address < self.program.len() {
+            self.program[address]
+        } else {
+            self.memory[address - self.program.len()]
+        }
+    }
+
+    fn write_mem(&mut self, address: usize, val: i64) {
+        if address < self.program.len() {
+            self.program[address] = val;
+        } else {
+            self.memory[address - self.program.len()] = val;
+        }
     }
 
     fn read(&self, x: Param) -> i64 {
         match x {
-            Param::Address { x } => self.program[x],
+            Param::Address { x } => self.read_mem(x),
             Param::Immediate { x } => x,
-            Param::Relative { x } => self.program[(self.relative_base as i64 + x) as usize],
+            Param::Relative { x } => self.read_mem((self.relative_base as i64 + x) as usize),
         }
     }
 
     fn write(&mut self, dst: Param, val: i64) {
         match dst {
-            Param::Address { x } => self.program[x] = val,
+            Param::Address { x } => self.write_mem(x, val),
             Param::Immediate { x: _ } => unreachable!(),
-            Param::Relative { x } => self.program[(self.relative_base as i64 + x) as usize] = val,
+            Param::Relative { x } => self.write_mem((self.relative_base as i64 + x) as usize, val),
         };
     }
 }

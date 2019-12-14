@@ -2,12 +2,9 @@ use super::intcode::*;
 
 fn run_program(p: &Program, input: &Vec<i64>) -> (Program, Option<i64>) {
     let mut computer = Intcode::new(&p, Some(input));
+    let out = computer.run_til_output();
 
-    while !computer.is_halted() {
-        computer.cycle();
-    }
-
-    (computer.program(), computer.output.pop_front())
+    (computer.program(), out)
 }
 
 pub fn run(input_str: &str) {

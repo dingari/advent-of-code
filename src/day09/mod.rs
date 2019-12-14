@@ -5,10 +5,7 @@ use super::intcode::*;
 fn run_program(p: &Program, input: Option<&[i64]>) -> VecDeque<i64> {
     let mut computer = Intcode::new(p, input);
 
-    while !computer.is_halted() {
-        computer.cycle();
-    }
-
+    computer.run_til_halt();
     computer.output
 }
 

@@ -4,7 +4,7 @@ fn calc_thrust(program: &Program, phase: &Vec<i64>) -> i64 {
     phase.iter().fold(0, |acc, &p| {
         let mut c = Intcode::new(program, Some(&vec![p, acc]));
 
-        c.run_til_halt().unwrap()
+        c.run_til_output().unwrap()
     })
 }
 
