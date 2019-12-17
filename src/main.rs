@@ -17,6 +17,7 @@ mod day09;
 mod day10;
 mod day11;
 mod day12;
+mod day13;
 
 fn read_file_to_string(file_path: &Path) -> String {
     let mut file = File::open(file_path).unwrap();
@@ -55,4 +56,5 @@ fn main() {
     day10::run(&read_file_to_string(root.join("day10").join("input.txt").into_boxed_path().as_ref()));
     day11::run(&read_file_to_string(root.join("day11").join("input.txt").into_boxed_path().as_ref()));
     day12::run(&read_file_to_string(root.join("day12").join("input.txt").into_boxed_path().as_ref()));
+    day13::run(&read_file_to_string(root.join("day13").join("input.txt").into_boxed_path().as_ref()));
 }

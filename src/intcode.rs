@@ -181,3 +181,11 @@ impl Intcode {
         };
     }
 }
+
+impl Iterator for Intcode {
+    type Item = i64;
+
+    fn next(&mut self) -> Option<i64> {
+        self.run_til_output()
+    }
+}
