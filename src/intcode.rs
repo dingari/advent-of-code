@@ -1,4 +1,5 @@
 use std::collections::VecDeque;
+use std::fmt::{Debug, Formatter, Result};
 
 pub type Program = Vec<i64>;
 
@@ -22,6 +23,7 @@ enum Op {
     Halt,
 }
 
+#[derive(Clone)]
 pub struct Intcode {
     program: Program,
     memory: Vec<i64>,
@@ -54,7 +56,7 @@ impl Intcode {
 
     pub fn run_til_halt(&mut self) {
         while !self.is_halted {
-            self.cycle();
+            self.do_cycle();
         }
     }
 
@@ -69,7 +71,7 @@ impl Intcode {
         let start = self.output.len();
 
         while self.output.len() < start + num && !self.is_halted {
-            self.cycle();
+            self.do_cycle();
         }
 
         match (self.is_halted, self.output.len() == start + num) {
@@ -79,8 +81,7 @@ impl Intcode {
         }
     }
 
-    //==============================================================================================
-    fn cycle(&mut self) {
+    pub fn do_cycle(&mut self) {
         if !self.is_halted {
             let (op, num_increments) = self.fetch();
             self.pc += num_increments;
@@ -89,6 +90,7 @@ impl Intcode {
         }
     }
 
+    //==============================================================================================
     fn fetch(&self) -> (Op, usize) {
         let split = |x: usize| -> (usize, usize, usize, usize) {
             let get_digit = |x: usize, d: usize| -> usize {
@@ -179,6 +181,12 @@ impl Intcode {
             Param::Immediate { x: _ } => unreachable!(),
             Param::Relative { x } => self.write_mem((self.relative_base as i64 + x) as usize, val),
         };
+    }
+}
+
+impl Debug for Intcode {
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        write!(f, "<pc: {}, is_halted: {}, relative_base: {}, input: {:?}, output: {:?}", self.pc, self.is_halted, self.relative_base, self.input, self.output)
     }
 }
 
